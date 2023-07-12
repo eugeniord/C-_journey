@@ -1,66 +1,42 @@
-class UnionFind{
-public:
-    vector<int> group;
-    vector<int> rank;
-
-    UnionFind(int size){
-        group = vector<int>(size);
-        rank = vector<int>(size);
-        for (int i=0; i<size; ++i)
-        group[i] = i;
-    }
-
-    int find(int node){
-        if (group[node] != node)
-            group[node] = find (group[node]);
-        return group[node];
-    }
-
-    bool join(int x, int y) {
-        int group1 = find(x);
-        int group2 = find(y);
-        if (group1 == group2)
-            return false;
-        if (rank[group1] > rank[group2]) {
-                group[group2] = group1;
-        } else if (rank[group1] < rank[group2]) {
-                group[group1] = group2;
-        } else {
-                group[group2] = group1;
-                rank[group1] += 1;
-        }
-        return true;
-    }
-};
-
-
 class Solution {
 public:
     int minCostConnectPoints(vector<vector<int>>& points) {
         int n = points.size();
-        vector<pair<int, pair<int,int>>> allEdges;
+        
+        //initialize the priority heap
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> heap;
 
-        for (int i = 0; i < n; i++)
-            for (int j = i+1; j < n; ++j){
-                int weight = abs(points[i][0] - points[j][0]) + 
-                             abs(points[i][1] - points[j][1]);
-                
-                allEdges.push_back({weight, {i, j}});
-            }
-        sort (allEdges.begin(), allEdges.end());
+        //create bool vector inMst;
+        vector<bool> inMst(n);
 
-        UnionFind uf(n);
+        heap.push({0, 0});
         int mstCost = 0;
-        int edgeUsed = 0;
+        int edgesUsed = 0;
 
-        for (int i = 0; i < allEdges.size() && edgeUsed < n - 1; ++i) {
-            int node1 = allEdges[i].second.first;
-            int node2 = allEdges[i].second.second;
-            int weight = allEdges[i].first;
-            
-            if (uf.join(node1, node2)) {
-                mstCost += weight;
-                edgeUsed++;
+        while (edgesUsed < n){
+            pair<int, int> topElement = heap.top();
+            heap.pop();
+
+            // cout<< topElement.first<< " "<< topElement.second<<endl;
+
+            int weight = topElement.first;
+            int myNode = topElement.second;
+
+            //check if node in mst
+            if (inMst[myNode])
+                continue;
+
+            inMst[myNode] = true;
+            mstCost += weight;
+            edgesUsed++;
+
+            for (int i = 0; i < n; ++i){
+                if (!inMst[i]){
+
+                    int nextWeight = abs(points[myNode][0] - points[i][0]) + 
+                                    abs(points[myNode][1] - points[i][1]);
+                    heap.push({nextWeight, i});
+                }
             }
         }
         
