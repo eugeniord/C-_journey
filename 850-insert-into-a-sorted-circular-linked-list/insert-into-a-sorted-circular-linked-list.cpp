@@ -27,25 +27,25 @@ public:
             newNode->next = newNode;
             return newNode;
         }
+        if (head->next == head) {
+            Node* newNode = new Node(insertVal, head);
+            head->next = newNode;
+            return head;
+        }
         Node* prev = head;
         Node* curr = head->next;
         bool insert = false;
 
         do{
-            if (prev->val <= insertVal && insertVal <= curr->val)
-                insert = true;
-            else if (prev->val > curr->val){
-                if (insertVal >= prev->val || insertVal <= curr->val)
-                    insert = true;
-            }
-            if (insert){
-                Node *kkt = new Node(insertVal, curr);
-                prev->next = kkt;
-                return head;
+            if (prev->val <= insertVal && insertVal <= curr->val) {
+                break;
+            } else if (prev->val > curr->val &&
+                (insertVal >= prev->val || insertVal <= curr->val)) {
+                break;
             }
             prev = curr;
             curr = curr->next;
-        }while (prev != head);
+        } while (prev != head);
 
         prev->next = new Node (insertVal, curr);
         return head;
