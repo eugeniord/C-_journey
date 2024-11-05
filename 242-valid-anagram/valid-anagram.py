@@ -1,22 +1,19 @@
 class Solution(object):
+    def checkFreq(self, str):
+        freq = {}
+        for s in str:
+            if s not in freq:
+                freq[s] = 1
+            else:
+                freq[s] += 1
+        return freq
     def isAnagram(self, s, t):
-        """
-        :type s: str
-        :type t: str
-        :rtype: bool
-        """
-        if len(s)!= len(t):
+        if len(s) != len(t):
             return False
-
-        chars = {}
-        chart = {}
-        for char in range(len(s)):
-            chars[s[char]] = 1 + chars.get(s[char], 0)
-            chart[t[char]] = 1 + chart.get(t[char], 0)
-
-        for char in chars:
-            if chars[char] != chart.get(char, 0):
-                return False
-        return True
+        c1 = self.checkFreq(s)
+        c2 = self.checkFreq(t)
+        if c1 == c2:
+            return True
+        return False
         
         
